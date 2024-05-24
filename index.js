@@ -42,6 +42,8 @@ async function authenticate(initData) {
   }
 }
 
+
+
 async function getClaim(token) {
   try {
     const response = await axios.post(
@@ -164,18 +166,24 @@ async function refreshToken(token) {
 (async () => {
   try {
     const initDataList = await readInitDataFromFile('./initdata.txt');
+    console.log('InitData List:', initDataList);
 
     const tasks = initDataList.map(async initData => {
       try {
         const token = await authenticate(initData);
         await getClaim(token);
       } catch (error) {
-        console.error('Error processing initData:', error);
+        const token = await authenticate(initData);
+        await refreshToken(token)
+
       }
     });
 
     await Promise.all(tasks);
   } catch (error) {
+    const token = await authenticate(initData);
+    refreshToken(token)
+    await Promise.all(tasks);
     console.error('Error in main flow:', error);
   }
 })();
