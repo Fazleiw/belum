@@ -39,6 +39,7 @@ def get_claim(token):
     }
     try:
         response = requests.post(url, headers=headers)
+        print(response.text)
         print('Claim successful')
         start_farm(token)
     except requests.exceptions.RequestException as error:
